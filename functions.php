@@ -18,3 +18,10 @@ $services = [
 
 new P4CT_Site( $services );
 
+remove_action( 'do_feed_rss2', 'do_feed_rss2', 10 );
+
+function taiwan_do_feed_rss2() {
+	load_template( __DIR__ . '/rss.php' ); 
+}
+
+add_action( 'do_feed_rss2', 'taiwan_do_feed_rss2' );
