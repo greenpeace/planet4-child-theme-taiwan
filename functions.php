@@ -57,6 +57,16 @@ function my_img_caption_shortcode( $empty, $attr, $content ){
 // custom RSS feed for ASIA
 remove_action( 'do_feed_rss2', 'do_feed_rss2', 10 );
 function asia_do_feed_rss2() {
-	load_template( __DIR__ . '/rss.php' ); 
+	load_template( __DIR__ . '/rss.php' );
 }
 add_action( 'do_feed_rss2', 'asia_do_feed_rss2' );
+
+// custom feeds for yahoo
+add_action('init', 'add_yahoo_rss_feed');
+function add_yahoo_rss_feed(){
+	add_feed('yahoo', 'yahoo_rss_feed');
+}
+function yahoo_rss_feed(){
+	// load_template('rss', 'feedname');
+	load_template( __DIR__ . '/rss_yahoo.php' );
+}
