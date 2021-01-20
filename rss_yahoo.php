@@ -5,8 +5,7 @@
  * @package WordPress
  */
 
-header( 'Content-Type: ' . feed_content_type( 'rss2' ) . '; charset=' . get_option( 'blog_charset' ), true );
-$more = 1;
+header( 'Content-Type: application/rss+xml; charset=' . get_option( 'blog_charset' ), true );
 
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?' . '>';
 
@@ -95,7 +94,7 @@ do_action( 'rss_tag_pre', 'rss2' );
 		<?php endif; ?>
 
 		<dc:creator><![CDATA[<?php echo get_post_meta( $post->ID, 'p4_author_override', true ); ?>]]></dc:creator>
-		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ); ?></pubDate>
+		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0800', get_post_time( 'Y-m-d H:i:s', false ), false ); ?></pubDate>
 		<?php the_category_rss( 'rss2' ); ?>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
 
@@ -110,7 +109,27 @@ do_action( 'rss_tag_pre', 'rss2' );
 			<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
 			<?php $content = get_the_content_feed( 'rss2' ); ?>
 			<?php if ( strlen( $content ) > 0 ) : ?>
-				<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
+				<?php
+					$yahoo_content = $content;
+
+					// remove format html tags
+					$yahoo_content = preg_replace('/class="[^\"]+"\s{0,1}/', "", $yahoo_content);
+					$yahoo_content = preg_replace('/style="[^\"]+"\s{0,1}/', "", $yahoo_content);
+					$yahoo_content = preg_replace('/<span\s*>([^<]+)<\/span>/', "$1", $yahoo_content);
+					$yahoo_content = preg_replace('/<figcaption\s*>([^<]+)<\/figcaption>/', "", $yahoo_content);
+					$yahoo_content = preg_replace('/<figure[^<]*>/', "<p>", $yahoo_content);
+					$yahoo_content = preg_replace('/<\/figure>/', "</p>", $yahoo_content);
+					$yahoo_content = preg_replace('/width="(\d+)"/', 'width="100%"', $yahoo_content);
+					$yahoo_content = preg_replace('/height="(\d+)"/', 'height="auto"', $yahoo_content);
+
+					// yahoo only accept two read-more articles.
+					// Keeps there's only two read-more aticles.
+					$yahoo_content = preg_replace(
+						'/<h3>延伸閱讀：<\/h3>\s*<ul>(\s*<li>.*?<\/li>)(\s*<li>.*?<\/li>)([\s\S\n\r]*)<\/ul>/u',
+						'<h3 class="read-more-vendor">延伸閱讀：</h3><ul>$1$2</ul>',
+						$yahoo_content);
+				?>
+				<content:encoded><![CDATA[<?php echo $yahoo_content; ?>]]></content:encoded>
 			<?php else : ?>
 				<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
 			<?php endif; ?>
