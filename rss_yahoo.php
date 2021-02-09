@@ -43,8 +43,7 @@ do_action( 'rss_tag_pre', 'rss2' );
 	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php bloginfo_rss( 'url' ); ?></link>
 	<description><?php bloginfo_rss( 'description' ); ?></description>
-	<lastBuildDate><?php echo get_feed_build_date( 'r' ); ?></lastBuildDate>
-	<language><?php bloginfo_rss( 'language' ); ?></language>
+	<lastBuildDate><?php echo get_feed_build_date('D, d M Y H:i:s +0800'); ?></lastBuildDate>
 	<sy:updatePeriod>
 	<?php
 		$duration = 'hourly';
@@ -112,6 +111,17 @@ do_action( 'rss_tag_pre', 'rss2' );
 				<?php
 					$yahoo_content = $content;
 
+					// remove blockquote
+					$yahoo_content = preg_replace('/<blockquote>\s*(.*?)\s*<\/blockquote>/', "<p>$1</p>", $yahoo_content);
+					$yahoo_content = preg_replace('/<p><p>(.*?)<\/p><\/p>/', "<p>$1</p>", $yahoo_content); // to fix blockquote=>p
+
+					// yahoo said that they don't want h3
+					$yahoo_content = preg_replace('/<h2>\s*(.*?)\s*<\/h2>/', "<h1>$1</h1>", $yahoo_content); // upgrade h2 to h1
+					$yahoo_content = preg_replace('/<h3>\s*(.*?)\s*<\/h3>/', "<h2>$1</h2>", $yahoo_content); // upgrade h3 to h2.
+
+					// yahoo don't want the img links
+					$yahoo_content = preg_replace('/<a.*?(<img.*?>)<\/a>/', "$1", $yahoo_content);
+
 					// remove format html tags
 					$yahoo_content = preg_replace('/class="[^\"]+"\s{0,1}/', "", $yahoo_content);
 					$yahoo_content = preg_replace('/style="[^\"]+"\s{0,1}/', "", $yahoo_content);
@@ -119,14 +129,13 @@ do_action( 'rss_tag_pre', 'rss2' );
 					$yahoo_content = preg_replace('/<figcaption\s*>([^<]+)<\/figcaption>/', "", $yahoo_content);
 					$yahoo_content = preg_replace('/<figure[^<]*>/', "<p>", $yahoo_content);
 					$yahoo_content = preg_replace('/<\/figure>/', "</p>", $yahoo_content);
-					$yahoo_content = preg_replace('/width="(\d+)"/', 'width="100%"', $yahoo_content);
+					$yahoo_content = preg_replace('/width="(\d+)"/', 'width="1200"', $yahoo_content);
 					$yahoo_content = preg_replace('/height="(\d+)"/', 'height="auto"', $yahoo_content);
 
-					// yahoo only accept two read-more articles.
-					// Keeps there's only two read-more aticles.
+					// yahoo accepts only two extra links
 					$yahoo_content = preg_replace(
-						'/<h3>延伸閱讀：<\/h3>\s*<ul>(\s*<li>.*?<\/li>)(\s*<li>.*?<\/li>)([\s\S\n\r]*)<\/ul>/u',
-						'<h3 class="read-more-vendor">延伸閱讀：</h3><ul>$1$2</ul>',
+						'/<h2>延伸閱讀：<\/h2>\s*<ul>\s*<li>(.*?)<\/li>\s*<li>(.*?)<\/li>([\s\S\n\r]*)<\/ul>/u',
+						'<p class="read-more-vendor"><span>延伸閱讀</span><br/>$1<br/>$2</p>',
 						$yahoo_content);
 				?>
 				<content:encoded><![CDATA[<?php echo $yahoo_content; ?>]]></content:encoded>
