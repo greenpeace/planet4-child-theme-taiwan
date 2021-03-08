@@ -135,7 +135,7 @@ do_action( 'rss_tag_pre', 'rss2' );
 					// yahoo accepts only two extra links
 					$yahoo_content = preg_replace(
 						'/<h2>延伸閱讀：<\/h2>\s*<ul>\s*<li>(.*?)<\/li>\s*<li>(.*?)<\/li>([\s\S\n\r]*)<\/ul>/u',
-						'<p class="read-more-vendor"><span>延伸閱讀</span><br/>$1<br/>$2</p>',
+						'<p class="read-more-vendor"><span>更多綠色和平文章</span><br/>$1<br/>$2</p>',
 						$yahoo_content);
 				?>
 				<content:encoded><![CDATA[<?php echo $yahoo_content; ?>]]></content:encoded>
