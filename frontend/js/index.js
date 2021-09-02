@@ -6,7 +6,7 @@ import {
   Scrollbar,
   Controller,
   Autoplay,
-} from "swiper/dist/js/swiper.esm.js";
+} from "swiper/swiper.esm.js";
 import LazyLoad from "vanilla-lazyload";
 import SmoothScroll from "smooth-scroll";
 import AOS from "aos";
@@ -29,7 +29,6 @@ import backLinks from "./components/back-links";
 import parallax from "./components/parallax";
 import scrollWay from "./components/scroll-way";
 import articleList from "./components/article-list";
-import facebookVideo from "./components/facebook-video";
 import dynamicSearch from "./components/dynamic-search";
 import ugc from "./components/ugc";
 import mcSubscription from "./components/mc-subscription";
@@ -46,7 +45,7 @@ polyfills();
 
 document.addEventListener("DOMContentLoaded", function (event) {
   //append lazy load class before reuqest images
-  jQuery('.section-post-content img').addClass('lazy');
+  jQuery(".section-post-content img").addClass("lazy");
 
   new LazyLoad({
     elements_selector: ".lazy",
@@ -101,8 +100,6 @@ document.addEventListener("DOMContentLoaded", function (event) {
   scrollWay();
 
   articleList();
-
-  facebookVideo();
 
   dynamicSearch();
 
