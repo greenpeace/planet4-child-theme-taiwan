@@ -346,7 +346,7 @@ class P4CT_Site {
 	 * @param string $hook Hook.
 	 */
 	public function enqueue_tw_assets ( $hook) {
-		wp_enqueue_script( 'zi-media', "//a.breaktime.com.tw/js/au.js?spj=NlEyMDUzMjBIS0tBSTFWTjkyNlM4Ng==",[], false, false );
+		wp_enqueue_script( 'zi-media', "//a.breaktime.com.tw/js/au.js?spj=NlEyMDUzMjBIS0tBSTFWTjkyNlM4Ng==",[], false, true );
 	}
 
 	/**
