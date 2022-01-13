@@ -103,9 +103,6 @@ class P4CT_Metabox_Register {
 	 * Add menu options page.
 	 */
 	public function add_options_pages() {
-
-		add_menu_page( 'Debug Information', 'Debug Info', 'read', 'gpea_curl_debug', [ $this, 'register_curl_debug_metabox' ], 'dashicons-admin-site-alt' );
-
 		add_menu_page( $this->title, $this->title, 'manage_options', $this->slug, function () {}, 'dashicons-admin-site-alt' );
 		foreach ( $this->subpages as $path => $subpage ) {
 			add_submenu_page(
@@ -119,7 +116,6 @@ class P4CT_Metabox_Register {
 				}
 			);
 		}
-
 	}
 
 	/**
@@ -1323,22 +1319,6 @@ class P4CT_Metabox_Register {
 		}
 
 
-
-	}
-
-	/**
-	 * Registers cURL debug meta box(es).
-	 */
-	public function register_curl_debug_metabox() {
-
-		$post_content = get_the_content( NULL, FALSE, isset($_GET['post_id']) ? $_GET['post_id'] : NULL );
-
-		?>
-
-		<h1>Debug Information</h1>
-		<?php
-
-		esc_html_e( $post_content );
 
 	}
 
