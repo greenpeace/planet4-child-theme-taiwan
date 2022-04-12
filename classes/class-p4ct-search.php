@@ -116,9 +116,9 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		/**
 		 * Main issues
 		 *
-		 * @var int $main_issues;
+		 * @var array $main_issues;
 		 */
-		public $main_issues;
+		public $main_issues = [];
 
 		/**
 		 * P4CT_Search constructor.
