@@ -74,3 +74,14 @@ function yahoo_rss_feed(){
 	// load_template('rss', 'feedname');
 	load_template( __DIR__ . '/rss_yahoo.php' );
 }
+
+add_filter( 'request', 'yahoo_rss_feed_request' );
+function yahoo_rss_feed_request( $request ) {
+	if(isset($request['feed']) && $request['feed'] == 'yahoo') {
+		$request['date_query'] = [
+			'before'    => '48 hours ago',
+			'inclusive' => FALSE,
+		];
+	}
+	return $request;
+}
