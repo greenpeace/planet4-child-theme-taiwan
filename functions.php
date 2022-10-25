@@ -61,7 +61,7 @@ function my_img_caption_shortcode( $empty, $attr, $content ){
 // custom RSS feed for ASIA
 remove_action( 'do_feed_rss2', 'do_feed_rss2', 10 );
 function asia_do_feed_rss2() {
-	load_template( __DIR__ . '/rss.php' );
+	load_template( __DIR__ . '/rss.php' ); 
 }
 add_action( 'do_feed_rss2', 'asia_do_feed_rss2' );
 
@@ -74,7 +74,6 @@ function yahoo_rss_feed(){
 	// load_template('rss', 'feedname');
 	load_template( __DIR__ . '/rss_yahoo.php' );
 }
-
 add_filter( 'request', 'yahoo_rss_feed_request' );
 function yahoo_rss_feed_request( $request ) {
 	if(isset($request['feed']) && $request['feed'] == 'yahoo') {
@@ -85,3 +84,11 @@ function yahoo_rss_feed_request( $request ) {
 	}
 	return $request;
 }
+
+// redirect author page
+function my_redirect() {
+	if ( is_author() ) {
+		wp_redirect( get_option('home'), 301 );
+	}
+}
+add_action( 'template_redirect', 'my_redirect' );
