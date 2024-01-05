@@ -234,7 +234,6 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 
 				// Check if call action is correct.
 				if ( 'get_paged_posts' === $search_action ) {
-					$this->set_main_issues();
 					$search_async = new static();
 					$search_async->set_context( $search_async->context );
 					$search_async->search_query = urldecode( filter_input( INPUT_GET, 'search_query', FILTER_SANITIZE_STRING ) );
