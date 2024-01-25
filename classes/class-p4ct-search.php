@@ -280,7 +280,6 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 						$search_async->view_paged_posts();
 					}
 				}
-				var_dump($search_async);
 				wp_die();
 			}
 		}
