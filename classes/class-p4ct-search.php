@@ -277,10 +277,12 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 					// If there are paged results then set their context and send them back to client.
 					if ( $search_async->paged_posts ) {
 						$search_async->set_results_context( $search_async->context );
+						var_dump($search_async);
+						wp_die();
 						$search_async->view_paged_posts();
+						
 					}
 				}
-				var_dump($search_async);
 				wp_die();
 			}
 		}
