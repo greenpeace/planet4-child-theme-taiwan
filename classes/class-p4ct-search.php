@@ -291,6 +291,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 * @param string $cache_group The group that will be used for storing the results in the object cache.
 		 */
 		protected function check_cache( $cache_key, $cache_group ) {
+			return;
 			$cache_group_terms = $cache_group . '_terms';
 			// Get search results from cache and then set the context for those results.
 			$this->posts = wp_cache_get( $cache_key, $cache_group );
