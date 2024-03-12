@@ -291,26 +291,25 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 * @param string $cache_group The group that will be used for storing the results in the object cache.
 		 */
 		protected function check_cache( $cache_key, $cache_group ) {
-			return;
-			$cache_group_terms = $cache_group . '_terms';
+			//$cache_group_terms = $cache_group . '_terms';
 			// Get search results from cache and then set the context for those results.
-			$this->posts = wp_cache_get( $cache_key, $cache_group );
-			$this->terms = wp_cache_get( $cache_key, $cache_group_terms );
+			// $this->posts = wp_cache_get( $cache_key, $cache_group );
+			// $this->terms = wp_cache_get( $cache_key, $cache_group_terms );
 			// If cache key expired then retrieve results once again and re-cache them.
-			if ( false === $this->posts ) {
+			//if ( false === $this->posts ) {
 				$this->posts = $this->get_timber_posts();
 				if ( $this->posts ) {
-					wp_cache_add( $cache_key, $this->posts, $cache_group, self::DEFAULT_CACHE_TTL );
+					//wp_cache_add( $cache_key, $this->posts, $cache_group, self::DEFAULT_CACHE_TTL );
 				}
-			}
+			//}
 			// TODO check if we only want to fetch posts if this is an AJAX request.
 			// if ( false === $this->terms && wp_doing_ajax() ) {
-			if ( false === $this->terms ) {
+			//if ( false === $this->terms ) {
 				$this->terms = $this->get_timber_terms();
 				if ( $this->terms ) {
-					wp_cache_add( $cache_key, $this->terms, $cache_group_terms, self::DEFAULT_CACHE_TTL );
+					//wp_cache_add( $cache_key, $this->terms, $cache_group_terms, self::DEFAULT_CACHE_TTL );
 				}
-			}
+			//}
 		}
 
 		/**
