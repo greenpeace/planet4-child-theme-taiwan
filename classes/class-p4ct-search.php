@@ -16,23 +16,23 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 	 */
 	abstract class P4CT_Search {
 
-		const POSTS_LIMIT                = -1;
-		const POSTS_PER_PAGE             = 10;
-		const POSTS_PER_LOAD             = 12;
-		const POSTS_LIVE_SEARCH_PER_LOAD = 6;
-		const SHOW_SCROLL_TIMES          = 2;
-		const DEFAULT_SORT               = '_score';
-		const DEFAULT_ALL_POST_SORT      = 'post_date';
-		const DEFAULT_MIN_WEIGHT         = 1;
-		const DEFAULT_PAGE_WEIGHT        = 100;
-		const DEFAULT_ACTION_WEIGHT      = 2000;
-		const DEFAULT_MAX_WEIGHT         = 3000;
-		const DEFAULT_CACHE_TTL          = 600;
-		const DUMMY_THUMBNAIL            = '/images/dummy-thumbnail.png';
-		const POST_TYPES                 = [
+		const POSTS_LIMIT           = 300;
+		const POSTS_PER_PAGE        = 10;
+		const POSTS_PER_LOAD        = 6;
+		const SHOW_SCROLL_TIMES     = 2;
+		const DEFAULT_SORT          = '_score';
+		const DEFAULT_MIN_WEIGHT    = 1;
+		const DEFAULT_PAGE_WEIGHT   = 100;
+		const DEFAULT_ACTION_WEIGHT = 2000;
+		const DEFAULT_MAX_WEIGHT    = 3000;
+		const DEFAULT_CACHE_TTL     = 600;
+		const DUMMY_THUMBNAIL       = '/images/dummy-thumbnail.png';
+		const POST_TYPES            = [
+			'page',
 			'post',
+			'user_story',
 		];
-		const DOCUMENT_TYPES             = [
+		const DOCUMENT_TYPES        = [
 			'application/pdf',
 		];
 
@@ -149,7 +149,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 * @param array      $templates An indexed array with template file names. The first to be found will be used.
 		 * @param array|null $context An associative array with all the context needed to render the template found first.
 		 */
-		public function load( $search_query, $selected_sort = NULL, $filters = [], $templates = [ 'search.twig', 'archive.twig', 'index.twig' ], $context = null ) {
+		public function load( $search_query, $selected_sort = self::DEFAULT_SORT, $filters = [], $templates = [ 'search.twig', 'archive.twig', 'index.twig' ], $context = null ) {
 
 			// TODO Shouldn't we check for a nonce, both here and on AJAX?
 			$this->initialize();
@@ -161,11 +161,6 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 			} else {
 				$this->context = Timber::get_context();
 
-				$has_search_query = @strlen($this->search_query) > 0;
-				if (!$has_search_query && is_null($selected_sort)) {
-					$selected_sort = $selected_sort ? self::DEFAULT_SORT : self::DEFAULT_ALL_POST_SORT;
-				}
-
 				// Validate user input (sort, filters, etc).
 				if ( $this->validate( $selected_sort, $filters, $this->context ) ) {
 					$this->selected_sort = $selected_sort;
@@ -175,7 +170,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 				// Set the decoded url query string as key.
 				$query_string = urldecode( filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING ) );
 				$group        = 'search';
-				$subgroup     = $has_search_query ? $this->search_query : ':all';
+				$subgroup     = $this->search_query ? $this->search_query : 'all';
 				// Check Object cache for stored key.
 				$this->check_cache( $query_string, "$group:$subgroup" );
 
@@ -197,16 +192,11 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 * @param array      $filters The selected filters.
 		 * @param array|null $context An associative array with all the context needed to render the template found first.
 		 */
-		public function gpea_load_ajax( $search_query, $selected_sort = NULL, $filters = [], $context = null ) {
+		public function gpea_load_ajax( $search_query, $selected_sort = self::DEFAULT_SORT, $filters = [], $context = null ) {
 
 			$this->search_query = $search_query;
 			$this->context = Timber::get_context();
 			$this->set_main_issues();
-
-			$has_search_query = @strlen($this->search_query) > 0;
-			if (!$has_search_query && is_null($selected_sort)) {
-				$selected_sort = $selected_sort ? self::DEFAULT_SORT : self::DEFAULT_ALL_POST_SORT;
-			}
 
 			// Validate user input (sort, filters, etc).
 			if ( $this->validate( $selected_sort, $filters, $this->context ) ) {
@@ -215,16 +205,16 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 			}
 
 			// Set the decoded url query string as key.
-			$query_string = urldecode( filter_input( INPUT_POST, 'search', FILTER_SANITIZE_STRING ) );
+			$query_string = urldecode( filter_input( INPUT_SERVER, 'search', FILTER_SANITIZE_STRING ) );
 			$group        = 'search';
-			$subgroup     = $has_search_query ? $this->search_query : ':all';
+			$subgroup     = $this->search_query ? $this->search_query : 'all';
 
 			// Check Object cache for stored key.
 			$this->check_cache( $query_string, "$group:$subgroup" );
 
-			// If posts were found either in object cache or primary database then get POSTS_LIVE_SEARCH_PER_LOAD results.
+			// If posts were found either in object cache or primary database then get the first POSTS_PER_LOAD results.
 			if ( $this->posts ) {
-				$this->paged_posts = array_slice( $this->posts, 0, self::POSTS_LIVE_SEARCH_PER_LOAD );
+				$this->paged_posts = array_slice( $this->posts, 0, self::POSTS_PER_LOAD );
 			}
 
 			$this->current_page = 1;
@@ -248,18 +238,16 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 					$search_async->set_context( $search_async->context );
 					$search_async->search_query = urldecode( filter_input( INPUT_GET, 'search_query', FILTER_SANITIZE_STRING ) );
 
-					$has_search_query = @strlen($search_async->search_query) > 0;
-
 					// Get the decoded url query string and then use it as key for redis.
 					$query_string_full = urldecode( filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING ) );
 					$query_string      = str_replace( '&query-string=', '', strstr( $query_string_full, '&query-string=' ) );
 
 					$group                      = 'search';
-					$subgroup                   = $has_search_query ? $search_async->search_query : ':all';
+					$subgroup                   = $search_async->search_query ? $search_async->search_query : 'all';
 					$search_async->current_page = $paged;
 
 					parse_str( $query_string, $filters_array );
-					$selected_sort    = $filters_array['orderby'] ?? ($has_search_query ? self::DEFAULT_SORT : self::DEFAULT_ALL_POST_SORT);
+					$selected_sort    = $filters_array['orderby'] ?? self::DEFAULT_SORT;
 					$selected_filters = $filters_array['f'] ?? [];
 					$filters          = [];
 
@@ -303,25 +291,25 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 * @param string $cache_group The group that will be used for storing the results in the object cache.
 		 */
 		protected function check_cache( $cache_key, $cache_group ) {
-			//$cache_group_terms = $cache_group . '_terms';
+			$cache_group_terms = $cache_group . '_terms';
 			// Get search results from cache and then set the context for those results.
-			// $this->posts = wp_cache_get( $cache_key, $cache_group );
-			// $this->terms = wp_cache_get( $cache_key, $cache_group_terms );
+			$this->posts = wp_cache_get( $cache_key, $cache_group );
+			$this->terms = wp_cache_get( $cache_key, $cache_group_terms );
 			// If cache key expired then retrieve results once again and re-cache them.
-			//if ( false === $this->posts ) {
+			if ( false === $this->posts ) {
 				$this->posts = $this->get_timber_posts();
 				if ( $this->posts ) {
-					//wp_cache_add( $cache_key, $this->posts, $cache_group, self::DEFAULT_CACHE_TTL );
+					wp_cache_add( $cache_key, $this->posts, $cache_group, self::DEFAULT_CACHE_TTL );
 				}
-			//}
+			}
 			// TODO check if we only want to fetch posts if this is an AJAX request.
 			// if ( false === $this->terms && wp_doing_ajax() ) {
-			//if ( false === $this->terms ) {
+			if ( false === $this->terms ) {
 				$this->terms = $this->get_timber_terms();
 				if ( $this->terms ) {
-					//wp_cache_add( $cache_key, $this->terms, $cache_group_terms, self::DEFAULT_CACHE_TTL );
+					wp_cache_add( $cache_key, $this->terms, $cache_group_terms, self::DEFAULT_CACHE_TTL );
 				}
-			//}
+			}
 		}
 
 		/**
@@ -901,8 +889,8 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		public function gpea_view_json() {
 			return wp_json_encode(
 				array(
-					'posts' => array_slice( $this->context['posts'], 0, self::POSTS_LIVE_SEARCH_PER_LOAD ),
-					'terms' => [],
+					'posts' => array_slice( $this->context['posts'], 0, self::POSTS_PER_LOAD ),
+					'terms' => array_slice( $this->context['terms'], 0, self::POSTS_PER_LOAD ),
 				)
 			);
 		}
