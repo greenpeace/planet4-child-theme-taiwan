@@ -123,10 +123,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		/**
 		 * P4CT_Search constructor.
 		 */
-		public function __construct() {
-			ini_set('display_errors', 1);
-			error_reporting(E_ALL);
-		}
+		public function __construct() {}
 
 		/**
 		 * Initialize the class. Hook necessary actions and filters.
