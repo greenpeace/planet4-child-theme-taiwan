@@ -777,7 +777,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 				$this->templates,
 				$this->context,
 				self::DEFAULT_CACHE_TTL,
-				\Timber\Loader::CACHE_NONE
+				\Timber\Loader::CACHE_OBJECT
 			);
 		}
 
@@ -805,7 +805,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 
 				foreach ( $this->paged_posts as $index => $post ) {
 					$paged_context['post'] = $post;
-					Timber::render( [ 'tease-search.twig' ], $paged_context, self::DEFAULT_CACHE_TTL, \Timber\Loader::CACHE_NONE );
+					Timber::render( [ 'tease-search.twig' ], $paged_context, self::DEFAULT_CACHE_TTL, \Timber\Loader::CACHE_OBJECT );
 				}
 			}
 		}
