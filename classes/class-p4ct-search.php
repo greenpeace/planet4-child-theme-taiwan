@@ -280,12 +280,12 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 		 */
 		protected function check_cache( $cache_key, $cache_group, $paged = 1 ) {
 			// Get search results from cache and then set the context for those results.
-			$this->paged_posts = wp_cache_get( $cache_key . ':' . $paged, $cache_group );
+			/* $this->paged_posts = wp_cache_get( $cache_key . ':' . $paged, $cache_group );
 			if( !$this->total_posts ) {
 				$this->total_posts = wp_cache_get( $cache_key . ':total_posts', $cache_group );
-			}
+			} */
 			// If cache key expired then retrieve results once again and re-cache them.
-			if ( !$this->paged_posts ) {
+			// if ( !$this->paged_posts ) {
 				$this->paged_posts = $this->get_timber_posts($paged);
 				if ( $this->paged_posts ) {
 					wp_cache_add( $cache_key . ':' . $paged, $this->paged_posts, $cache_group, self::DEFAULT_CACHE_TTL );
@@ -293,7 +293,7 @@ if ( ! class_exists( 'P4CT_Search' ) ) {
 				if ( $this->total_posts ) {
 					wp_cache_add( $cache_key . ':total_posts', $this->total_posts, $cache_group, self::DEFAULT_CACHE_TTL );
 				}
-			}
+			// }
 		}
 
 		/**
