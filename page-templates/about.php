@@ -19,8 +19,8 @@
 
 use Timber\Timber;
 
-$context        = Timber::context();
-$post           = Timber::get_post();
+$context        = Timber::get_context();
+$post           = new P4_Post();
 $page_meta_data = get_post_meta( $post->ID );
 
 // Set Navigation Issues links.
