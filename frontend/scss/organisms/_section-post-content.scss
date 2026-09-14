@@ -228,6 +228,19 @@
     }
   }
 
+  // Quote boxes use the same inner spacing as the table of contents box.
+  // Content often sits inside a wrapper, such as a summary holding a list.
+  // Every last element loses its bottom gap, so space above and below matches.
+  blockquote {
+    padding: 30px 20px;
+    @include greaterThan('sm') {
+      padding: 30px;
+    }
+    :last-child {
+      margin-bottom: 0;
+    }
+  }
+
   .leader {
     position: relative;
     width: 100%;
