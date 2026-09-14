@@ -140,6 +140,20 @@
     }
   }
 
+  // The Easy Table of Contents plugin puts its list inside the article body.
+  // The list rules above would indent it and add a 20px gap under every entry.
+  // An ID selector outranks them, so the table stays compact.
+  #ez-toc-container {
+    ul {
+      margin-bottom: 0;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+  }
+
   h2 {
     @include title-mid;
   }
