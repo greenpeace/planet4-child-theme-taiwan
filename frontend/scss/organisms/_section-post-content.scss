@@ -147,7 +147,17 @@
   // The title matches their line height too.
   // The list rule already gives the list the paragraph text size.
   // The plugin shrinks entries to 95%, so they inherit the size back.
+  // The box fills the text column and uses the quote box spacing.
   #ez-toc-container {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 30px 20px;
+    @include greaterThan('sm') {
+      margin-top: 40px;
+      margin-bottom: 40px;
+      padding: 30px;
+    }
     .ez-toc-title {
       line-height: 1.7;
     }
