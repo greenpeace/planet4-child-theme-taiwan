@@ -144,11 +144,12 @@
   // The list rules above would indent it and add a 20px gap under every entry.
   // An ID selector outranks them, so the table stays compact.
   // Entries match body paragraphs in text size and line height.
+  // The title matches their line height too.
   // The list rule already gives the list the paragraph text size.
   // The plugin shrinks entries to 95%, so they inherit the size back.
   #ez-toc-container {
     .ez-toc-title {
-      line-height: 1.45;
+      line-height: 1.7;
     }
     ul {
       margin-bottom: 0;
